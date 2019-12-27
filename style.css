@@ -6,8 +6,6 @@ body {
 
 .wrapper {
   display: grid;
-  /* grid-template-columns: repeat(auto-fill, minmax(400px,1fr)); */
-  /* grid-template-columns: minmax(300px,800px); */
   grid-gap: 2px;
   color: #444;
   max-width: 50em;
@@ -43,18 +41,6 @@ figcaption {
   font-weight: bolder;
   color: #006da3;
 }
-
-/* Some black magic to make the background a little bit transparent */
-/* .div {
-    background:rgb(0,0,0);
-    background: transparent\9;
-    background:rgba(0,0,0,0.001);
-    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#66000000,endColorstr=#66000000);
-    zoom: 1;
-}
-.div:nth-child(n) {
-    filter: none;
-} */
 
 /* Some font black magic */
 h1 {
