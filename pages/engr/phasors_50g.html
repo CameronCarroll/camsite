@@ -1,0 +1,57 @@
+<! DOCTYPE html>
+<html>
+  <head>
+    <title>Cameron's Page - Old Notes</title>
+    <link rel="stylesheet" href="/style.css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
+  </head>
+
+  <body>
+    <div class="wrapper">
+      <header class="box a">
+    		<nav>
+          <b>Cameron's Site:</b>
+    			<ul>
+            <li><a href="/"> Top </a></li>
+    				<li><a href="/listings/old_notes.html">Old (Unformatted) Notes</a></li>
+    			</ul>
+          <hr />
+    		</nav>
+  	 </header>
+     <section class="box b">
+       <article>
+         <header>
+           <h2>Calculating Phasor Quantities with HP 50g Calculator <br>
+           <sub>(Spring - 2015)</sub></h2>
+         </header>
+             <h2 id="adding--v2-rect-and-cylin-to-soft-menu">Adding -&gt;V2, RECT and CYLIN to soft menu</h2>
+         <ul>
+         <li>We often need to convert between rectangular and polar form. Lets add these commands to the CUSTOM softmenu.</li>
+         <li>V2 builds a two-dimensional vector using the first two stack values and builds in polar/rectangular depending on mode.</li>
+         <li>RECT and CYLIN don't convert the first stack value as I thought they did, but instead set the coordinate mode. (Thus displaying ALL stack values in that mode.)</li>
+         <li><a href="http://h30499.www3.hp.com/t5/Calculators/A-Simple-Way-to-Assign-Menu-Commands-with-HP50g/td-p/1162495">Source from HP Forum</a></li>
+         <li>invoke: [white] [mode=&gt;custom] # to open custom softmenu</li>
+         <li>invoke: {-&gt;V2 RECT CYLIN} [enter] MENU [enter] # caps values can be fetched from the [CAT]alog</li>
+         <li>In words, put the -&gt;V2, RECT and CYLIN commands in curly brackets, then call the MENU command.</li>
+         </ul>
+         <h2 id="entering-complex-values-the-hard-way">Entering complex values, the hard way</h2>
+         <ul>
+         <li>Make sure complex mode is on</li>
+         <li>For rectangular values, enter between round parenthesis with a space. ie 5+j3 would be (5 3)</li>
+         <li>For polar values, enter between round parenthesis spaced with angle symbol ([alpha][red][6]). ie 5 at 30 degrees would be (5&lt;30)</li>
+         </ul>
+         <h2 id="entering-complex-values-better">Entering complex values, better</h2>
+         <ul>
+         <li>Make sure complex mode is on, otherwise -&gt;V2 will just build a regular vector. With complex mode, it still looks just like a regular vector but the j is implied.</li>
+         <li>As described above, setup a custom softmenu with the -&gt;V2, RECT and CYLIN/POLAR functions.</li>
+         <li>For rectangular values, switch to rectangular coordinate system, put your two components on the stack, and -&gt;V2</li>
+         <li>For polar values, switch to polar system, put r and angle on the stack, then -&gt;V2</li>
+         <li>To switch your answer between the two, you can just switch coordinate systems. All complex values are stored in rectangular form and displayed according to the chosen system.</li>
+         </ul>
+
+         <p> </p>
+    		</article>
+      </section>
+    </div>
+  </body>
+</html>
