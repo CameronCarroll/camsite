@@ -1,0 +1,100 @@
+<! DOCTYPE html>
+<html>
+  <head>
+    <title>Cameron's Page - Old Notes</title>
+    <link rel="stylesheet" href="/style.css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
+  </head>
+
+  <body>
+    <div class="wrapper">
+      <header class="box a">
+    		<nav>
+          <b>Cameron's Site:</b>
+    			<ul>
+            <li><a href="/"> Top </a></li>
+    				<li><a href="/listings/old_notes.html">Old (Unformatted) Notes</a></li>
+    			</ul>
+          <hr />
+    		</nav>
+  	 </header>
+     <section class="box b">
+       <article>
+         <p><b><a href="/pages/FSAE/AER-Review-1.html">Link to Part 1: AER's first semester of design</a></b></p>
+         <h2 id="overview-of-spring-designmanufacturing-phase">Overview of Spring Design/Manufacturing Phase <br />
+         <sub>(Summer - 2017)</sub></h2>
+
+         <p>According to the schedule, designs were to be frozen in December. In reality, design work continued up to the days of competition and was never finished. In our second semester, while the rest of the team was quite successful in building the chassis, driveline, and mechanical systems of the vehicle, Tractive/Controls struggled to research, design, purchase for and build the electrical backbone to the vehicle. </p>
+         <ul>
+         <li><strong>January and February</strong>
+         <ul>
+         <li>Electronic component selection begins for Tractive system; Controls already purchased some sensors and switches, but we lacked connectors and components for the high voltage system.
+         <ul>
+         <li>Downsides to choosing maximum allowed power become apparent, as connectors and components rated for 300-400A are expensive and scarce. Team understood generally that components can be rated for continuous expected current rather than peak current, but did not have the knowledge or data to support such a decision.</li>
+         </ul></li>
+         <li>Worked on design and components for our first “cheap” accumulator (a relative term – Lithium cells are <em>expensive!</em>) up through February, before scrapping and starting over with our LG Chem cell design.</li>
+         <li>The team struggled for a long time (months) with the weight issue, with an original target weight of 475 lb without driver. (At competition, our car weighed over 700 lb.) A team member working at an EV shop was able to get us many thousands of dollars worth of components, but by using them we completely blew our weight budget.
+         <ul>
+         <li>By mid-February, the team management and advisor were on board with the super high weight design because it was the obvious only choice available. The time lost waiting for this final approval frustrated the Tractive system, but I don't think it ultimately made a difference in whether or not we competed, due to deficiencies in the safety and Controls systems.</li>
+         </ul></li>
+         </ul></li>
+         <li>Mechanical parts of Tractive system begin to come together:
+         <ul>
+         <li>Zytek 451 drive assembly separated into components.</li>
+         <li>Battery cells finalized, but all other details were worked out on the fly during this time.</li>
+         <li>Up until a month or so before competition, we did not have a solution for motor controller, as the Zytek unit uses proprietary codes which have not been reverse engineered for general use. Finally, we got in touch with Sevcon, who tuned their latest and largest model to drive the Zytek motor. (Gen4 Size8 for $3000ish)</li>
+         </ul></li>
+         <li><strong>March througuh May</strong>
+         <ul>
+         <li>Our Controls lead graduated at the end of the first semester, leaving essentially nothing in terms of institutional knowledge. The replacement, although enthusiastic, was overwhelmed and lacked the circuit design knowledge required. This author ended up adopting the circuits and safety system during the second semester.
+         <ul>
+         <li>This seems very self-centered, but it truly felt like these documents and systems moved forward only as quickly as I could understand them. It was a totally new area of knowledge for everyone on the team; One team member working in an EV shop had many years of practical design experience, bringing immeasurable knowledge and resources to our team, but often approached problems with less rigor/analysis than this author agreed with. Aside from him, team was very experienced with all of the mechanical apects of the car, but electrical knowledge was rather limited. (People worked on what they knew because there was so much to finish.)</li>
+         <li>By March, I decided to adopt the ESF and FMEA documents. The first step was to gut them of the bullshit, a task more easily done by starting over with a blank document.
+         <ul>
+         <li>Some of the team is still salty about these docs, having seen them as a waste of time. Personally, I saw them as great tools to guide our designs when we really had no idea about how to build a safe high-voltage system.</li>
+         <li>Again, some teammates might scoff at the idea that this is a 'safe' system as specified by the rules and the judges, but we're hardly at the level of engineering needed to implement these specifications, let alone to write the specifications ourselves.</li>
+         </ul></li>
+         </ul></li>
+         <li>As May turned to June, the electrical team finally began to understand the constaints to the safety circuit design, forcing us to quickly rethink the architecture:
+         <ul>
+         <li>Our first approach was naive, with all functions distributed onto separate circuits. I don't believe this approach ever reached design-for-manufacturing and could have been consolidated onto a PCB if finished.</li>
+         <li>However, in an attempt to simplify the construction, our controls team redesigned the system to use CPLDs (or a single CPLD) with all of the sensor and switch circuits programmed in. A week or two was spent on this effort until…</li>
+         <li>We realized that the circuits must be implemented in non programmable logic, ie hardwired circuits. My understanding is that this is to prevent programming or firmware errors from invalidating an otherwise safe design.</li>
+         <li>Eventually our electrical engineering consultant put together a last-minute PCB containing the primary safety system circuits: BMS/IMD/HVD interlock relay control, brake pedal plausibility, and acceleration pedal handling.
+         <ul>
+         <li>Our team did not have the time/ability to put together these circuits on short notice, so this PCB served as a baseline allowing us to develop the rest of the safety system.</li>
+         </ul></li>
+         </ul></li>
+         </ul></li>
+         <li><strong>June</strong>
+         <ul>
+         <li>By the month of our competition, the team had scrambled to pull the car together mechanically for a rolling chassis, and the Tractive system finished an accumulator design and mounted the motor and driveline.</li>
+         <li>The Controls system was in dire straits: The PCB design was outsourced to our consultant as a last-ditch effort to compete, other circuits were being designed and manufactured in the days just before competition, and critical issues in the design didn't become apparent until we arrived at Lincoln. (Consultant misunderstood galvanic isolation in the context of HV automotive systems, taking the marine electronics view instead.)</li>
+         <li>Components were ordered online too late to arrive in time for competition, forcing us to find quick replacements from local electronics/hardware stores.</li>
+         <li>The days before and of competition included furious electrical assembly, as the accumulator came together and the vehicle sensors and switches were wired up.
+         <ul>
+         <li>With 75 cells on which to add thermistor and voltage sense leads, it took Order(8) hours to wire and assemble the accumulator.</li>
+         <li>Room for packaging suffered due to the low-budget high-power design. Without proper time to plan wire routing and looming, the vehicle quickly became a mess of copper.</li>
+         </ul></li>
+         <li>Deficiencies in Tractive designs:
+         <ul>
+         <li>Need to know actual outputs from equipment</li>
+         <li>Need to model losses as well as needs vs capability</li>
+         <li>No mystery components allowed – Everything must have a datasheet. (An attempt at running a UL94-V0 rating test on a piece of insulation was rejected WRT edge cases of molten metal rather than a bunsen burner flame.)</li>
+         <li>(Sparing the long list of things that are missing.)</li>
+         </ul></li>
+         <li>Deficiencies on Controls designs:
+         <ul>
+         <li>No ownership of the central PCB</li>
+         <li>System has never booted up</li>
+         <li>We'll find out once we try to boot the systems up and bench test everything. (Power supply acquired!)</li>
+         </ul></li>
+         </ul></li>
+         </ul>
+
+
+    		</article>
+      </section>
+    </div>
+  </body>
+</html>
