@@ -1,0 +1,442 @@
+<! DOCTYPE html>
+<html>
+  <head>
+    <title>Cameron's Page - Old Notes</title>
+    <link rel="stylesheet" href="/style.css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
+  </head>
+
+  <body>
+    <div class="wrapper">
+      <header class="box a">
+    		<nav>
+          <b>Cameron's Site:</b>
+    			<ul>
+            <li><a href="/"> Top </a></li>
+    				<li><a href="/listings/old_notes.html">Notes Index</a></li>
+    			</ul>
+          <hr />
+    		</nav>
+  	 </header>
+     <section class="box b">
+       <article>
+         <header>
+           <h2>Interfacing between Ruby and Fortran (Via C)<br>
+           <sub>(Spring - 2014)</sub></h2>
+         </header>
+
+         <h2 id="section_i"> Introduction </h2>
+           <p> You might be thinking that Ruby and Fortran is an odd mixture... and you're certainly correct. But in addition to being an exercise in hooking things together, I feel that the languages complement each other: </p>
+           <table class="table">
+             <thead>
+               <th> Ruby </th>
+               <th> Fortran </th>
+             </thead>
+             <tbody>
+               <tr>
+                 <td>Elegant, expressive, &amp; maleable... at the expense of speed and native support for matrix operations.</td>
+                 <td>Awesome for numerical computing... at the expense of being rigid, unelegant and antiquated.</td>
+               </tr>
+               <tr>
+                 <td>Has an extensive and vibrant community. (Modern codebase) </td>
+                 <td>Historically established (Some things are only in Fortran) and rich (There are tons of Fortran programs sitting around on the web from years past.) (Large historical codebase)</td>
+               </tr>
+             </tbody>
+           </table>
+           <h4> Overview: </h4>
+             <ol>
+               <li> <a href="#section_1"> Fortran &amp; C </a> -- Calling a Fortran function from C</li>
+               <li> <a href="#section_2"> Compilation Flags and Automation </a> -- Creating a build script</li>
+               <li> <a href="#section_3"> C and Ruby </a> -- Calling a C function from Ruby</li>
+               <li> <a href="#section_4"> Fortran from Ruby </a> -- Putting it all together with the Sieve of Eratosthenes</li>
+               <li> <a href="#section_5"> Benchmarks &amp; Conclusion </a> </li>
+             </ol>
+           <p> I don't know if there's a reason or way to use this in production... but lets figure it out anyway! </p>
+           <p> If you're interested in the subject and you have time, you might want to check out the <a href="#references">reference reading</a> as well.
+
+         <!-- =======================================================================-->
+         <hr />
+         <h2 id="section_1"> Section 1: Calling Fortran from C. </h2>
+           <p> Lets first look at calling a Fortran function. This function will simply add to its integer parameter. </p>
+           <pre class="code">:::fortran
+         ! test1.f08
+         function test_function(test_input) bind(c, name="test_function") result(test_output)
+           use, intrinsic :: iso_c_binding
+           implicit none
+           integer(kind=c_int), intent(in) :: test_input
+           integer(kind=c_int) :: test_output
+
+           test_output = test_input + 10
+
+
+         end function test_function
+           </pre>
+           <h3> Notable features: </h3>
+             <ul>
+               <li> According to the GFortran spec, the bind statement is required. In practice, it allows us to specify the exported symbol name which by default has an extra underscore suffix. </li>
+               <li> The iso_c_binding module is used to get interoperable datatypes. We make Fortran play by C's rules. Although I only used integers, there is a <a href="http://gcc.gnu.org/onlinedocs/gcc-4.7.0/gfortran/ISO_005fC_005fBINDING.html#ISO_005fC_005fBINDING"> whole set of equivalents. </a>
+             </ul>
+           <p> And then we're going to need the C program which calls it: </p>
+           <pre class="code">:::C
+         // test1.c
+         #include &lt;stdio.h&gt;
+
+         int test_function(int *); // Equivalent to int test_function_(int*);
+
+         int main() {
+           int i = 10;
+           int return_value;
+
+           return_value = test_function(&i); // NOT equivalent to test_function_(&i) unless we omit bind(c, "test_function")
+           printf("Return value was: %d\n", return_value);
+
+           return 0;
+         }
+           </pre>
+           <h3> Notes: </h3>
+             <ul>
+               <li> We forward-declare our imported function. If we omit bind(c), it doesn't seem to matter if this declaration has the underscore suffix. </li>
+               <li> We pass the function parameter by reference... C can handle either method, but Fortran only handles by references. </li>
+               <li> We can see that C recieves two different symbol names for our function depending on the bind statement. </li>
+             </ul>
+           <p> Finally, we can compile, link and execute to prove our method works. </p>
+         <!-- =======================================================================-->
+         <hr />
+         <h2 id="section_2"> Section 2: Creating a Build Script </h2>
+           <p> In order to compile our C files with Ruby support, we need to include the Ruby headers. This is most easily accomplished with rbconfig. Lets automate the process using a Rakefile: </p>
+           <pre class="code">:::ruby
+         # Rakefile
+
+         require 'rake/clean'
+         require 'rbconfig'
+
+         # Add our output files to clobber list so we can call 'rake clobber'
+         CLOBBER.include('*.o', '*.so')
+
+         # Use RbConfig to get the Ruby library locations for inclusion into our C programs.
+         CFLAGS = RbConfig::CONFIG["CFLAGS"]
+         HDRDIR = RbConfig::CONFIG["rubyhdrdir"]
+         ARCHHDRDIR = RbConfig::CONFIG["rubyarchhdrdir"]
+
+         # Task for test 1 (C and Fortran interop).
+         # If you've never used Rake (or Make) before, our output files depend on the input files,
+         # and the task being completed depends on us having those output files.
+         task :test1 => ["test1_f.o", "test1_c.o"]
+
+           file "test1_f.o" => "test1.f08" do |t|
+             compile(t.prerequisites.first, t.name)
+           end
+
+           file "test1_c.o" => "test1.c" do |t|
+             compile(t.prerequisites.first, t.name)
+           end
+
+         # Task for test 2 (Ruby and C interop)
+         task :test2 => "test2.o"
+
+           file "test2.o" => "test2.c" do |t|
+             compile_c_for_ruby(t.prerequisites.first, t.name)
+           end
+
+         # Task for test 3 (Calling Fortran from Ruby through C)
+         task :test3 => "sievemodule.so"
+         task :default => :test3
+
+           file "sievemodule.so" => ["driver.o", "provider.o"] do |t|
+             sh "gcc -shared -o sievemodule.so driver.o provider.o -lgfortran -lm -lruby"
+           end
+
+           file "driver.o" => "driver.c" do |t|
+             compile_c_for_ruby(t.prerequisites.first, t.name)
+           end
+
+           file "provider.o" => "provider.f08" do |t|
+             compile(t.prerequisites.first, t.name)
+           end
+
+         # Generic compilation function which works for both C and F08 files without special inclusions.
+         def compile(src, target)
+           sh "gcc -c -fPIC -o #{target} #{src}"
+         end
+
+         # Specific compilation function to include Ruby headers for C.
+         def compile_c_for_ruby(src, target)
+           sh "gcc -c -I #{ARCHHDRDIR} -I#{HDRDIR} #{CFLAGS} -o #{target} #{src}"
+         end
+           </pre>
+           <h3> Some features of our build script: </h3>
+             <ul>
+               <li> We set up three commands: 'rake test1', 'rake test2' and 'rake test3' for compilation (and in the third case, linking together) and 'rake clobber' to remove our generated files. </li>
+               <li> RbConfig provides the Ruby header locations and C compilation flags. </li>
+               <li> Both the Fortran and C files are compiled with fPIC. (It's included in CFLAGS.) </li>
+               <li> In the third case, the C and Fortran object code is linked into our sievemodule.so, linked against the GFortran, math and Ruby libraries. </li>
+             </ul>
+           <p> With this in hand, we can proceed into the realm of C/Ruby integration... </p>
+
+         <!-- =======================================================================-->
+         <hr />
+         <h2 id="section_3"> Section 3: Calling C from Ruby </h2>
+           <p> Calling C from Ruby is more complicated... Not only do we have to write our functional C code, but also have to create a ruby module &amp; method using the tools provided with the Ruby header, and handle data types between the two languages. I strongly suggest looking over the Ruby/C Interop <a href="#references">references</a> to understand what's going on. This time, lets just print out a string. </p>
+           <pre class="code">:::C
+         // test2.c
+         #include "ruby.h"
+         #include "stdio.h"
+
+         VALUE TestModule = Qnil;
+
+
+         VALUE method_test_function(VALUE self) {
+           printf("Hello, Ruby. (From C)\n");
+           return 0;
+         }
+
+         void Init_testmodule() {
+           TestModule = rb_define_module("TestModule");
+           rb_define_method(TestModule, "test_function", method_test_function, 0);
+         }
+           </pre>
+           <h3> Lets see what's going on here: </h3>
+             <ul>
+               <li> We need to include the Ruby header, which requires an extra statement during compilation. </li>
+               <li> C uses the VALUE type to represent Ruby data. Everything is an object, so everything in our interface code is a VALUE! </li>
+               <li> We initialize our module, TestModule, to the Ruby nil datatype, Qnil. </li>
+               <li> We define a method with the prefix 'method_'. Also, Ruby functions written in C need the 'VALUE self' argument even when our actual parameter count is zero. </li>
+               <li> Every module calls its 'Init_' function when loaded, which we use to build our Ruby module object.</li>
+               <li> We also define the method as belonging to the module. That last argument corresponds to parameter count. </li>
+             </ul>
+           <p> The ruby script that consumes this, however, is blissfully simple: </p>
+           <pre class="code">:::Ruby
+         # test2.rb
+         require './testmodule.so'
+         include TestModule
+         test_function()
+           </pre>
+           <p> All we need to do is invoke our Rakefile in order to compile and then run the ruby driver. </p>
+           <pre class="code">
+         rake test2
+         gcc -shared -o testmodule.so test2.o -lruby
+         ruby test2.rb
+
+         --> Hello, Ruby. (From C)
+           </pre>
+         <!-- =======================================================================-->
+         <hr />
+         <h2 id="section_4"> Section 4: Putting it Together: Calling Fortran from Ruby </h2>
+         <!-- =======================================================================-->
+           <p> Now we can put everything together. Lets so something slightly more interesting and calculate primes using the Sieve of Eratosthenes algorithm. First we need a Fortran subroutine to call: </p>
+           <pre class="code">
+         subroutine sieve_of_eratosthenes(max_value, number_list) bind(c, name="sieve_of_eratosthenes")
+           use, intrinsic :: iso_c_binding
+           implicit none
+
+           integer(kind=c_int), intent(in) :: max_value
+           integer(kind=c_int), dimension(max_value), intent(out) :: number_list(max_value)
+           integer(kind=c_int) :: outer_high_bound, inner_high_bound, i
+
+           number_list = 1
+           number_list(1) = 0
+
+           outer_high_bound = int (sqrt (real (max_value)))
+           inner_high_bound = max_value
+
+           do i = 2, outer_high_bound
+             if (number_list(i) == 1) number_list(i*i : max_value : i) = 0
+           end do
+         end subroutine sieve_of_eratosthenes
+           </pre>
+
+           <h3> Notes: </h3>
+             <ul>
+               <li> Apparently a Fortran function won't let us pass an array as a parameter, but a subroutine will. </li>
+               <li> We create an array to hold the value in C and pass the reference in to be filled by Fortran. </li>
+             </ul>
+
+           <p> The C file serving as a middleman: </p>
+           <pre class="code">
+         #include <stdio.h>
+         #include "ruby.h"
+
+         int sieve_of_eratosthenes(int *, int *);
+         VALUE SieveModule = Qnil;
+
+         VALUE method_invoke_sieve(VALUE self, VALUE iterations) {
+           int output [iterations], ii;
+           VALUE result;
+           int c_iterations = NUM2INT(iterations);
+           if (c_iterations) {
+             sieve_of_eratosthenes(&c_iterations, output);
+           }
+
+           result = rb_ary_new();
+           for(ii=0; ii&lt;c_iterations; ii++) {
+             int prime = ii + 1;
+             rb_ary_push(result, INT2FIX(output[prime]));
+           }
+           return result;
+         }
+
+         void Init_sievemodule() {
+           SieveModule = rb_define_module("SieveModule");
+           rb_define_method(SieveModule, "invoke_sieve", method_invoke_sieve, 1);
+         }
+           </pre>
+           <h3> Notes: </h3>
+             <ul>
+               <li> We do a forward-declaration for the sieve subroutine and initialize our module variable to Ruby-nil. </li>
+               <li> We build a ruby method which we package into a module and expose to Ruby below. </li>
+               <li> There's a little bit of data-type-dancing going on... we accept a 'number' iterations from Ruby which needs to be converted into a C-int. Then when packing our array to return to Ruby, we want to convert integers into fixed numbers. </li>
+             </ul>
+           <p> Now we can put the final piece in place: A very simple Ruby driver: </p>
+           <pre class="code">
+         require './sievemodule.so'
+         include SieveModule
+
+
+         iterations = 1000
+         result = invoke_sieve(iterations)
+
+
+         puts "Primes under #{iterations}:"
+         result.each_with_index do |item, ii|;
+           if result[ii] == 1 # Then value is a prime; Print it out.
+             print ii + 2
+             print " "
+           else
+             # Value is composite.
+           end
+         end
+         puts "\n"
+           </pre>
+           <h3> Notes: </h3>
+             <ul>
+               <li> The array we actually returned from the Sieve subroutine was a list of integers with '1' if that value is prime and '0' if not. </li>
+             </ul>
+           <p> Now we just have to compile, link, and try it out: </p>
+           <div style="width:100%; overflow:auto"
+               <pre class="code">
+             $ rake test3
+             $ ruby consumer.rb
+
+             --> Primes under 1000:
+             2 3 5 7 11 13 17 19 23 29 31 37 41 43 47 53 59 61 67 71 73 79 83 89 97 101 103 107 109 113 127 131 137 139 149 151 157 163 167 173 179 181 191 193 197 199 211 223 227 229 233 239 241 251 257 263 269 271 277 281 283 293 307 311 313 317 331 337 347 349 353 359 367 373 379 383 389 397 401 409 419 421 431 433 439 443 449 457 461 463 467 479 487 491 499 503 509 521 523 541 547 557 563 569 571 577 587 593 599 601 607 613 617 619 631 641 643 647 653 659 661 673 677 683 691 701 709 719 727 733 739 743 751 757 761 769 773 787 797 809 811 821 823 827 829 839 853 857 859 863 877 881 883 887 907 911 919 929 937 941 947 953 967 971 977 983 991 997
+
+               </pre>
+            </div>
+         <hr />
+         <h2 id="section_5"> Benchmarks and Conclusions </h2>
+         <!-- =======================================================================-->
+         <!-- BEGIN BENCHMARK / CONCLUSION SECTION !!!!!!!!!!!!!!!!!!!!! -->
+         <div>
+           <h3> Methodology: </h6>
+           <p>
+             I tested three different implementations of the Sieve of Eratosthenes: My own Ruby/C/Fortran stack (shown above,) a pure Fortran implementation using the same core algorithm, and a  pure Ruby implementation. (Codes for which have been lost but were completely basic implementations.)
+             <br /> <br />
+             Each program was tested against 10,000 iterations and 1,000,000 each. In addition, each run was repeated without I/O processing (printing of the prime numbers and determining which ones are prime.) For each circumstance, run time was measured with the Unix utility <strong>time</strong> 10 times and averaged (arithmetic mean.)
+           </p>
+           <br />
+           <table class="table table-striped">
+             <thead>
+               <th> Implementation </th>
+               <th> Run time (10,000)</th>
+               <th> Run time (1,000,000) </th>
+               <th> Description </th>
+             </thead>
+             <tbody>
+               <tr>
+                 <td> Pure Ruby </td>
+                 <td> 0.1566 (seconds) </td>
+                 <td> 1.7979 s </td>
+                 <td> I/O included </td>
+               </tr>
+               <tr>
+                 <td> Pure Ruby </td>
+                 <td> 0.0267 s </td>
+                 <td> 0.6064 s </td>
+                 <td> Computation only </td>
+               </tr>
+               <tr>
+                 <td> Pure Fortran </td>
+                 <td> 0.0138 s </td>
+                 <td> 2.0481 s </td>
+                 <td> I/O included </td>
+               </tr>
+               <tr>
+                 <td> Pure Fortran </td>
+                 <td> 0.003 s </td>
+                 <td> 0.0192 s </td>
+                 <td> Computation only </td>
+               </tr>
+               <tr>
+                 <td> Full stack </td>
+                 <td> 0.0393 s </td>
+                 <td> 1.404 s </td>
+                 <td> I/O included </td>
+               </tr>
+               <tr>
+                 <td> Full stack </td>
+                 <td> 0.0221 s </td>
+                 <td> 0.0592 s </td>
+                 <td> Computation only </td>
+               </tr>
+             </tbody>
+           </table>
+           <h3> Conclusion: </h3>
+           <p>
+             Here we see that I/O is a significant factor, with Fortran actually coming in as the slowest when I/O is included. Naturally, it is lightning-fast again sans output. Note that this particular implementation of the Sieve requires the I/O routine to check which data are primes, increasing the load on that part of the full task while lessening the work done by the "computation only" circumstances.
+             <br /> <br />
+             Pure Ruby is on par with its C/Fortran extension given a small task with such an efficient algorithm. But after boosting the work up to 1 million integers, pure Ruby is left in the dust.
+             <br /> <br />
+             I conclude that a binary extension is definitely worth the time spent for Ruby scripts that need to do any significant calculation. We all already knew that, of course. I'm not sure that writing any new functions in Fortran is a better idea than writing them in C, because every new datatype is another torrent of complexity when you have to convert it back and forth.
+             <br /><br />
+             Further investigation is needed to determine whether Fortran extensions would be even remotely robust. In addition, I intend to explore interfacing with existing legacy code, which is probably a much more viable use of Ruby/Fortran.
+             <br /><br />
+             Thanks for reading! Hope you're inspired to play further with Fortran or Ruby.
+           </p>
+         </div>
+
+         <!-- END BENCHMARK / CONCLUSION SECTION !!!!!!!!!!!!!!!!!!!!!!!! -->
+         <hr />
+         <!-- BEGIN REFERENCES SECTION !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+         <div>
+           <h3> References: </h3>
+           <dl>
+             <dt>[1] <a href="http://www.rubycentral.com/pickaxe/ext_ruby.html"> Pickaxe: C Extensions</a> </dt>
+             <dd>The quinessential 'learning Ruby' book, available online, discussing C extensions.
+             </dd>
+
+             <dt>[2] <a href="http://www.eqqon.com/index.php/Ruby/Ruby_V1.9_C_Extension"> Eqqon & Matz: C Extension Libraries</a> </dt>
+             <dd>
+               An annotated version of an explanatory text that Matz, creator of Ruby, checked somewhere into the source.
+             </dd>
+
+             <dt>[3] <a href="http://gcc.gnu.org/onlinedocs/gfortran/Mixed_002dLanguage-Programming.html#Mixed_002dLanguage-Programming"> GFortran: Mixed Language Programming </a> </dt>
+             <dd>
+               GCC Fortran compiler documentation on C/Fortran interoperation and extensions.
+             </dd>
+
+             <dt>[4] <a href="http://www.ats.ucla.edu/clusters/common/computing/c-fortran-interop.html"> UCLA: C/Fortran Interoperation </a> </dt>
+             <dd>
+               Example code and compilation options for C calling Fortran code, as well as Fortran calling C code.
+             </dd>
+
+             <dt>[5] <a href="http://gcc.gnu.org/onlinedocs/gcc-4.7.0/gfortran/ISO_005fC_005fBINDING.html#ISO_005fC_005fBINDING"> GFortran: ISO_C_BINDING Intrinsic Module </a> </dt>
+             <dd>
+               Documentation for the Fortran module intended for C interoperability. Good datatype reference.
+             </dd>
+
+             <dt>[5] <a href="http://en.wikipedia.org/wiki/Sieve_of_Eratosthenes"> Wikipedia: Sieve of Eratosthenes</a> </dt>
+             <dd>
+               Wiki explanation of Sieve of Eratosthenes history and algorithm
+             </dd>
+
+           </dl>
+         </div>
+         <!-- END REFERENCES SECTION !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+         <hr />
+         </div>
+
+    		</article>
+      </section>
+    </div>
+  </body>
+</html>
