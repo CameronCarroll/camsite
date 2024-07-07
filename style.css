@@ -32,14 +32,46 @@ sub {
 }
 
 /* Styles for images */
-img {
-  border: thick double #32a1ce;
-  margin: 10px;
+figure {
+  margin: 2em 0;
+  text-align: center;
+}
+
+figure img {
+  display: inline-block;
+  max-width: 30%;  /* Adjust as needed */
+  height: auto;
+  margin: 0 1%;
+  vertical-align: middle;
 }
 
 figcaption {
-  font-weight: bolder;
-  color: #006da3;
+  margin-top: 1em;
+  font-style: italic;
+  font-size: 0.9em;
+  color: #666;
+}
+
+/* For smaller screens */
+@media (max-width: 600px) {
+  figure img {
+    max-width: 100%;
+    margin: 1em 0;
+  }
+}
+
+/* Set up article paragraph style for comfortable reading width/margins */
+main {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 0 20px;
+  line-height: 1.6;
+  font-size: 18px;
+  font-family: Arial, sans-serif;
+}
+
+p {
+  margin-bottom: 1.5em;
 }
 
 /* Some font black magic */
