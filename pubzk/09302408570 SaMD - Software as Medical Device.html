@@ -1,0 +1,56 @@
+<! DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>NOTES ON STUFF &#127793;</title>
+  <link rel="stylesheet" href="/style.css">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
+</head>
+
+  <body>
+  <header>
+    <h3>09302408570 SaMD - Software as Medical Device</h3>
+  </header>
+    <main>
+    <p><strong>Sources:</strong>
+1. https://www.fda.gov/medical-devices/digital-health-center-excellence/digital-health-frequently-asked-questions-faqs
+2. IMDRF SaMD WG N10/Software as a Medical Device
+3. Canary2</p>
+
+<p>**
+<strong>Does FDA regulate SaMD?</strong>**</p>
+
+<p>SaMD is defined by IMDRF. For software to be regulated by FDA as a device, the software must meet the definition discussed in [[09272407361 RN FDA Webinar Digital Health]]</p>
+
+<p>**
+<strong>Medical purpose vs non-medical-purpose software</strong>**</p>
+
+<p>Software used to make or maintain a device (eg testing, source code management, servicing) is not considered to be software with a medical purpose (by IMDRF).</p>
+
+<p>**
+<strong>Definition of SaMD</strong>**</p>
+
+<pre><code>Software intended to be used for one or more medical purposes that perform these purposes without being part of a hardware medical device.
+
+NOTES:
+- 'without being part of' means software not necessary for a hardware medical device to achieve its intended medical purpose
+- Software does not meet the definition of SaMD if its intended purpose is to drive a hardware medical device
+- SaMD is a medical device.
+</code></pre>
+
+<p>**
+<strong>Read on functions typical in active implantable ecosystem</strong>**</p>
+
+<ul>
+  <li>Software that turns on / off therapy cannot be SaMD <em>(drives a hardware medical device).</em></li>
+  <li>Software that programs the therapy parameters cannot be SaMD (<em>because that software <strong>is</strong> necessary for the hardware implant to meet its intended medical purpose</em>)</li>
+  <li>Software that receives, stores and transmits patient / device information (eg some server collecting device logs / registration information)… <em>well, depends on whether we are a “Medical Device” per IMDRF definition. I don’t think so. I think that’s falling on the non-medical-purpose side of things.</em></li>
+  <li>Software that pushes patches down to the implant (<em>aka servicing, which was called out as ‘not considered software with a medical purpose’ in the note in Introduction section of  SaMD WG/N10</em>)</li>
+</ul>
+
+<p><em>Hm, where does that put us for Mainstay? RC/Prog. as SiMD? (software in medical device)? Or software as accessory to medical device…</em></p>
+
+    </main>
+
+  </body>
+</html>
