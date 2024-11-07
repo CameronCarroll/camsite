@@ -12,37 +12,131 @@
     <h3>09102405251 Software BOM (SBOM)</h3>
   </header>
     <main>
-    <p>Sources:
-* https://csrc.nist.gov/csrc/media/Presentations/2023/fda-s-medical-device-program-and-sbom/images-media/JWilkerson-ssca-forum-053123.pdf</p>
+    
+<p>**
+<strong>What is an SBOM?</strong>**</p>
 
 <ul>
   <li>Nested inventory of all building blocks that make up a software product, including all open-source and third-party components present in a medical software product’s codebase.</li>
+</ul>
+
+<p>![[image003.png]]</p>
+
+<p>**
+<strong>When is SBOM required? By who?</strong>**</p>
+
+<ul>
   <li>SBOM is mandated…
     <ul>
-      <li>for government software by 2021 Executive Order 14028, Improving the Nation’s Cybersecurity.</li>
-      <li>for medical devices by US Code §360n–2. Ensuring cybersecurity of devices uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title21-section360n-2&amp;num=0&amp;edition=prelim (added as 524B but they switched section numbers around.)</li>
+      <li>for government software by 2021 Executive Order 14028, Improving the Nation’s Cybersecurity. <em>(included for historical context)</em></li>
+      <li>for medical devices on US market by US Code §360n–2. Ensuring cybersecurity of devices uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title21-section360n-2&amp;num=0&amp;edition=prelim (added as 524B but they switched section numbers around.)</li>
+      <li>For devices on EU market by <em>(??)</em> EN IEC 81001-5-1
+        <ul>
+          <li>SBOM requirement flows in via configuration management in this standard.</li>
+          <li>This standard is maybe a good middle ground between FDA and EU expectations?</li>
+          <li>Recognized elsewhere in the world?</li>
+        </ul>
+      </li>
     </ul>
   </li>
 </ul>
 
-<p>Minimum required elements:</p>
+<p>**
+<strong>What needs to be part of the SBOM?</strong>**</p>
+
+<p>Minimum required elements:
+- Data on supplier, component name, component version, other unique identifiers, dependency relationship, author of SBOM data, and timestamp
+- Support for automation, including ability to be generated automatically and read by machines to allow for scaling across software ecosystem.<br />
+    Data formats: SPDX, CycloneDX and SWID tags
+- Practices for SBOM management: Frequency <em>(of what?)</em>, depth, known unknowns, distribution and delivery, access control, and accommodation of mistakes<br />
+    <em>(What even are all those things?)</em></p>
+
+<p>Recommendations from CDRH are are to:
+	– Provide SBOMs to FDA to facilitate understanding/evaluation of device risk
+	– Provide SBOMs to users to enable risk management activities
+• Beyond “minimum” SBOM elements, FDA CDRH also wants:
+	– Known vulnerability information
+	– Support status / level of support
+	– End of support/end of life dates
+* Beyond “minimum” SBOM elements, EU also wants: (per 81001-5-1?)
+	- Status “Maintained vs Required vs Supported”
+	- <strong>Maintained</strong> - Responsibility lies with the device manufacturer, who monitors for vulnerabilities and provides patches.
+	- <strong>Required</strong> - Responsibility lies with the operator.
+	- eg - A device which is Maintained goes EOL (eg windows OS is no longer supported), then the SBOM attribute for this item should be updated from “Maintained” to “Required”</p>
+
+<p>Note that some SBOM implementations are intended more for software development than cybersecurity management. Regulators are asking for more information than is found in a typical technical SBOM.</p>
+
+<p>**
+<strong>How is SBOM intended to be used <em>by us, the manufacturer</em>?</strong>**</p>
 
 <ul>
-  <li>Data on supplier, component name, component version, other unique identifiers, dependency relationship, author of SBOM data, and timestamp</li>
-  <li>Support for automation, including ability to be generated automatically and read by machines to allow for scaling across software ecosystem.<br />
-  Data formats: SPDX, CycloneDX and SWID tags</li>
-  <li>Practices for SBOM management: Frequency (of what?), depth, known unknowns, distribution and delivery, access control, and accommodation of mistakes<br />
-  (What even are all those things?)</li>
+  <li>Identify software items that are unsupported or will reach EOL (hopefully earlier in development lifecycle.)
+    <ul>
+      <li>Depending on depth, this may uncover system libraries / tools that are buried deeply in the device software.</li>
+    </ul>
+  </li>
+  <li>Consult regularly against vulnerability databases and assess risk of newly found risks that surface in those databases.
+    <ul>
+      <li>(This allows us to mitigate risk for black box components where we can’t perform [[11072411350 Threat Modeling]])</li>
+    </ul>
+  </li>
+  <li>They have 100s / 1000s or devices that come from as many manufacturers, so they will end up with a gigantic library of SBOMs over time.</li>
+  <li>When matching against vulnerability database, the names may not exactly match, so the matching algorithm / regex / whatever may not get everything perfectly and need to be reconciled.</li>
 </ul>
 
-<p><em>Copied definition from EO 14028 because it’s quite succinct.</em>
-~~~
-“Software Bill of Materials” or “SBOM” means a formal record containing the details and supply chain relationships of various components used in building software.  Software developers and vendors often create products by assembling existing open source and commercial software components.  The SBOM enumerates these components in a product.  It is analogous to a list of ingredients on food packaging.  </p>
+<p>**
+<strong>How is SBOM intended to be used by FDA and other regulators?</strong>**</p>
 
-<p>An SBOM is useful to those who develop or manufacture software, those who select or purchase software, and those who operate software.  Developers often use available open source and third-party software components to create a product; an SBOM allows the builder to make sure those components are up to date and to respond quickly to new vulnerabilities.  Buyers can use an SBOM to perform vulnerability or license analysis, both of which can be used to evaluate risk in a product.  Those who operate software can use SBOMs to quickly and easily determine whether they are at potential risk of a newly discovered vulnerability.  </p>
+<p><em>Not sure yet exactly. They intend to assess the risk of the device software before those risks are put onto the market.</em></p>
 
-<p>A widely used, machine-readable SBOM format allows for greater benefits through automation and tool integration.  The SBOMs gain greater value when collectively stored in a repository that can be easily queried by other applications and systems.  Understanding the supply chain of software, obtaining an SBOM, and using it to analyze known vulnerabilities are crucial in managing risk.
-~~~</p>
+<p>**
+<strong>How is SBOM intended to be used by operators (hospitals)?</strong>**</p>
+
+<p>The type of scenario we’re trying to avoid is, eg, a ventilator or ultrasonic machine infected by some malware that becomes part of a spam botnet which is impacting its network connectivity, preventing operators from transferring data to/from this equipment. 
+(This is apparently a foreseeable and not totally uncommon scenario.)</p>
+
+<p>Perhaps the device manufacturer didn’t communicate end of life information, or the hospital didn’t plan for it and retire/upgrade the equipment, or maybe they just had inadequate physical security controls.</p>
+
+<p>The idea is that the device manufacturer provides operators with an SBOM which allows them to perform their own vulnerability scanning and for replacement planning (eg maybe the potential risk of an outdated device is sufficient to trigger a replacement.)</p>
+
+<p>This whole SBOM thing is pretty new, so there are still challenges in providing operators with the information in a way that they can make meaningful use from it.
+(<em>I think FDA put out a guidance / discussion in Autumn 2024 on SBOMs that talks about this issue, making SBOMs interoperable and usable.</em>)</p>
+
+<p>**
+<strong>Determining Component End of Life (EOL)</strong>**</p>
+
+<p>EOL may be tricky to determine, and not readily provided by the source. We may need to collect information from multiple sources to determine EOL, and some components may not even have EOL or a roadmap.</p>
+
+<p>**
+<strong>How to actually create SBOM?</strong>**</p>
+
+<p>May end up being more complex than just a list of the input ingredients. Across the layers of software, may end of up with 100,000’s of entries. Or maybe a supplier may not disclose what is underneath a certain software component.</p>
+
+<p>And SBOM needs to be maintained for every configuration of software that’s created, and need SBOMs for every configuration that’s out in the field.</p>
+
+<p>Many SBOM tools that are out there are software development tools rather than vulnerability management / sharing tools.</p>
+
+<p>Tooling / companies with products to automatically generate SBOM from source files ?
+* Medcrypt (<em>sponsor of some of the input information to this zettel</em>)</p>
+
+<p>FDA Requirements –&gt; NTIA framing document (plus additional attributes called out in guidances)
+EU Requirements –&gt; IEC 81001-5-1</p>
+
+<p>**
+<strong>Definition from EO 14028</strong>**</p>
+
+<pre><code>“Software Bill of Materials” or “SBOM” means a formal record containing the details and supply chain relationships of various components used in building software.  Software developers and vendors often create products by assembling existing open source and commercial software components.  The SBOM enumerates these components in a product.  It is analogous to a list of ingredients on food packaging.  
+
+An SBOM is useful to those who develop or manufacture software, those who select or purchase software, and those who operate software.  Developers often use available open source and third-party software components to create a product; an SBOM allows the builder to make sure those components are up to date and to respond quickly to new vulnerabilities.  Buyers can use an SBOM to perform vulnerability or license analysis, both of which can be used to evaluate risk in a product.  Those who operate software can use SBOMs to quickly and easily determine whether they are at potential risk of a newly discovered vulnerability.  
+
+A widely used, machine-readable SBOM format allows for greater benefits through automation and tool integration.  The SBOMs gain greater value when collectively stored in a repository that can be easily queried by other applications and systems.  Understanding the supply chain of software, obtaining an SBOM, and using it to analyze known vulnerabilities are crucial in managing risk.
+</code></pre>
+
+<h2 id="references">References</h2>
+<p>Sources:
+* NTIA “Framing Software Component Transparency: Establishing a Common Software Bill of Materials” https://ntia.gov/sites/default/files/publications/ntia_sbom_framing_2nd_edition_20211021_0.pdf - <em>The 2021 version of this is called out by the FDA guidance as the canonical reference, but there is a newer version so probably use the newer one cos they can’t update guidances very easily. ??</em>
+* https://csrc.nist.gov/csrc/media/Presentations/2023/fda-s-medical-device-program-and-sbom/images-media/JWilkerson-ssca-forum-053123.pdf
+* “Bridging the Gap – Navigating EU and US Medical Device Cybersecurity Regulations” webinar, Nov 7 2024 (Johner Institute, Medcrypt, MedISAO)</p>
 
     </main>
 
