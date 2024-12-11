@@ -1,7 +1,7 @@
 Hiya.
 
 This my site, currently http://ieve.me
-Started November 2019 - Kiya Sana
+Started November 2019 - Kiya San
 Currently being updated as of December 2023.
 
 Build environment: None -- This website will be plain HTML/CSS with no external dependencies.
