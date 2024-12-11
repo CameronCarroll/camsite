@@ -1,0 +1,97 @@
+<! DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>NOTES ON STUFF &#127793;</title>
+  <link rel="stylesheet" href="/style.css">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
+</head>
+
+  <body>
+  <header>
+    <h3>09302402171 RN FDA CDRH Webinar Software PMA</h3>
+  </header>
+    <main>
+    <p>https://www.youtube.com/watch?v=DwFW_24-T8w</p>
+
+<p><strong>Cybersecurity:</strong></p>
+
+<ul>
+  <li>
+    <p>Cybersecurity - focused on exploitability rather than the impact of that risk. And not the intentions of a malicious hacker to go after the software - instead how is the software vulnerable to cybersecurity exploitation?</p>
+  </li>
+  <li>
+    <p>Software, probability difficult to assess, need to determine if realistic ???<br />
+Likelihood of cybersecurity events and impact on patient safety??</p>
+  </li>
+</ul>
+
+<p>At time of draft guidances they were a little conflicting</p>
+
+<p>**
+<strong>SRS and SDS</strong>**</p>
+
+<p>Some traceability system should be in place. Nice to provide a description of how we perform traceability. FDA doesn’t expect a trace matrix specifically because there are other ways of fulfilling.</p>
+
+<p>SRS - High level design
+SDS - Low level stuff</p>
+
+<p>So how does the high level design gets translated into the lower level design that software developers are using for coding process?</p>
+
+<p>62304 asks for a trace matrix to show traceability though.</p>
+
+<p>Not looking for an excel file with the link between them for the PMA submission. FDA wants to see critical risks are traced through from requirements.</p>
+
+<p>Internally document traceability from user needs down through test cases. FDA primarily looking for the risk assessment piece.</p>
+
+<p>FDA not looking at source code, only documentation.</p>
+
+<p>Risk control measures –&gt; Requirement where implemented, where tested. And need processes in place to accomplish this.</p>
+
+<p>**
+<strong>Software version history</strong>**</p>
+
+<p>During development make many different versions that might be used for hardware, usability, etc testing.</p>
+
+<p>What versions need to be described in a submission?</p>
+
+<p>–&gt; Want to know what versions of software was used for each type of testing.</p>
+
+<p>Doesn’t have to be like every commit / build, but want to know about the builds that were used for testing.</p>
+
+<p>**
+<strong>62304 software safety class vs FDA documentation level</strong>**</p>
+
+<p>Documentation level is quite different from software safety classification. It’s hard to directly relate them.</p>
+
+<p>In some areas A&amp;B match with basic, and C with enhanced (?) but not generally.</p>
+
+<p>**
+<strong>Detail level of documentation to be submitted</strong>**</p>
+
+<p>Does FDA need like executed protocols and test reports along with the summary stuff?</p>
+
+<p>For enhanced, in addition to system level testing also want to see unit level integration test protocols and reports.</p>
+
+<p>FDA does want to see test cases that were executed, was it pass or fail, if it failed what was the outcome (did the overall test fail or was that individual failure justified to be OK?)</p>
+
+<p>**
+<strong>Cloud services</strong>**</p>
+
+<p>In FDA diagrams, cloud services are shown as COTS.</p>
+
+<p>If a cloud service is far removed from device function eg load balancing, this kind of stuff is not regulated by FDA.</p>
+
+<p>In architecture diagrams, FDA wants to be able to see if something is being performed onsite or somewhere else.</p>
+
+<p>**
+<strong>Classification of device vs documentation level</strong>**</p>
+
+<p>Probably Class III –&gt; Enhanced</p>
+
+<p>But in general, software class doesn’t dictate documentation level.</p>
+
+    </main>
+
+  </body>
+</html>

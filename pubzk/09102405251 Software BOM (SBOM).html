@@ -1,0 +1,50 @@
+<! DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>NOTES ON STUFF &#127793;</title>
+  <link rel="stylesheet" href="/style.css">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
+</head>
+
+  <body>
+  <header>
+    <h3>09102405251 Software BOM (SBOM)</h3>
+  </header>
+    <main>
+    <p>Sources:
+* https://csrc.nist.gov/csrc/media/Presentations/2023/fda-s-medical-device-program-and-sbom/images-media/JWilkerson-ssca-forum-053123.pdf</p>
+
+<ul>
+  <li>Nested inventory of all building blocks that make up a software product, including all open-source and third-party components present in a medical software product’s codebase.</li>
+  <li>SBOM is mandated…
+    <ul>
+      <li>for government software by 2021 Executive Order 14028, Improving the Nation’s Cybersecurity.</li>
+      <li>for medical devices by US Code §360n–2. Ensuring cybersecurity of devices uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title21-section360n-2&amp;num=0&amp;edition=prelim (added as 524B but they switched section numbers around.)</li>
+    </ul>
+  </li>
+</ul>
+
+<p>Minimum required elements:</p>
+
+<ul>
+  <li>Data on supplier, component name, component version, other unique identifiers, dependency relationship, author of SBOM data, and timestamp</li>
+  <li>Support for automation, including ability to be generated automatically and read by machines to allow for scaling across software ecosystem.<br />
+  Data formats: SPDX, CycloneDX and SWID tags</li>
+  <li>Practices for SBOM management: Frequency (of what?), depth, known unknowns, distribution and delivery, access control, and accommodation of mistakes<br />
+  (What even are all those things?)</li>
+</ul>
+
+<p><em>Copied definition from EO 14028 because it’s quite succinct.</em>
+~~~
+“Software Bill of Materials” or “SBOM” means a formal record containing the details and supply chain relationships of various components used in building software.  Software developers and vendors often create products by assembling existing open source and commercial software components.  The SBOM enumerates these components in a product.  It is analogous to a list of ingredients on food packaging.  </p>
+
+<p>An SBOM is useful to those who develop or manufacture software, those who select or purchase software, and those who operate software.  Developers often use available open source and third-party software components to create a product; an SBOM allows the builder to make sure those components are up to date and to respond quickly to new vulnerabilities.  Buyers can use an SBOM to perform vulnerability or license analysis, both of which can be used to evaluate risk in a product.  Those who operate software can use SBOMs to quickly and easily determine whether they are at potential risk of a newly discovered vulnerability.  </p>
+
+<p>A widely used, machine-readable SBOM format allows for greater benefits through automation and tool integration.  The SBOMs gain greater value when collectively stored in a repository that can be easily queried by other applications and systems.  Understanding the supply chain of software, obtaining an SBOM, and using it to analyze known vulnerabilities are crucial in managing risk.
+~~~</p>
+
+    </main>
+
+  </body>
+</html>

@@ -1,0 +1,69 @@
+<! DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>NOTES ON STUFF &#127793;</title>
+  <link rel="stylesheet" href="/style.css">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
+</head>
+
+  <body>
+  <header>
+    <h3>09272407361 RN FDA Webinar Digital Health</h3>
+  </header>
+    <main>
+    <p>Sources:
+(1) US Code - FD&amp;C Act 321(h) &amp; 360j(o)
+(2) https://www.youtube.com/embed/PlCt-xOLwRQ (CDRH Learn - Digital Health)</p>
+
+<h2 id="per-fda-webinar">Per FDA Webinar</h2>
+<p>It’s actually slightly out of date. At the time of the webinar, in 2015, FDA’s position was that they didn’t intend to enforce compliance on MDDS (Medical Device Data Systems) that <em>solely</em> transmit/store data and don’t interpret / analyze it in any way.</p>
+
+<p>Then in 2016, the FD&amp;C language was updated to add the exclusions discussed in 360j(o). I’m not sure if that alleviates the “enforcement discretion” confusion.</p>
+
+<p>But generally, FDA approach is that for very low risk devices, they don’t intend to examine to determine whether they are devices, and if they are devices, FDA doesn’t intend to enforce compliance. (Only for products intended for general wellness use and that have an inherent low risk profile.)</p>
+
+<p>This was <em>extremely confusing</em> for everyone on the Webinar. I guess that’s why they fixed it a year later.</p>
+
+<p>**
+<strong>What is an ‘accessory’?</strong>**</p>
+
+<p>Device intended to support / supplement / augment the performance of a parent device. 
+FDA proposes that accessories will be classified similar to any other device. It could be in a lower/higher risk class compared to parent device.</p>
+
+<h2 id="fda-definition-per-fdc">FDA Definition per FD&amp;C</h2>
+<p>MMA := Medical Mobile Apps, which is defined in ~201(h)~ Title 21 - Chapter 9 - Section 321(h) ‘Definitions; generally’ of FD&amp;C Act.
+<em>Note that they changed section numbers at some point and some FDA/CDRH stuff still points to the old numbers. To find FD&amp;C act, go to http://uscode.house.gov/browse.xhtml and browse to the Title and Chapter listed (or you can just look for where the section number is, but that’s apparently not a permanent unique ID.)</em></p>
+
+<p>Oh that’s pointing to the definition of a device. For us (<em>context is a patient control app for an active implantable</em>), the relevant part is…</p>
+
+<pre><code>The term "device" (except when used in paragraph (n) of this section and in sections 331(i), 343(f), 352(c), and 362(c) of this title) means an instrument, apparatus, implement, machine, contrivance, implant, in vitro reagent, or other similar or related article, including any component, part, or accessory, which is-
+
+(B) intended for use in the diagnosis of disease or other conditions, or in the cure, mitigation, treatment, or prevention of disease, in man or other animals, or
+
+(C) intended to affect the structure or any function of the body of man or other animals, and which does not achieve its primary intended purposes through chemical action within or on the body of man or other animals and which is not dependent upon being metabolized for the achievement of its primary intended purposes. 
+
+The term "device" does not include software functions excluded pursuant to section 360j(o) of this title.
+</code></pre>
+
+<p>So we do intend to treat a disease / affect function of the body. This seems to apply. What about this last part, what is 360j(o)?</p>
+
+<pre><code>§360j. General provisions respecting control of devices intended for human use
+!!! PARAPHRASED AND STUFF I DIDN'T CARE ABOUT LEFT OUT !!!
+
+The term device, as defined in section 321(h) of this title, shall not include a software function that is intended for-
+(A) Healthcare administration software
+(B) Software to encourage users to have a healthy lifestyle but don't diagnose, cure, mitigate, prevent or treat a disease
+(C) Electronic patient records software that meets certain requirements
+(D) Software that transfers / stores / converts format of / displays device data and results but does not interpret or analyze that data.
+
+Except these guys are still devices: (This is an exclusion to the exclusions.)
+(E) Software that acquires some signal from some IVD / "signal acquisition system" that provides information intended to be analyzed in a clinical context. 
+</code></pre>
+
+<p>The fundamental function of our app is to control stimulation sessions for the IPG - therefore none of these exclusions apply. Our app is an essential part of the system that controls the therapy - therefore it is a device per FD&amp;C 321(h).</p>
+
+    </main>
+
+  </body>
+</html>
